@@ -63,4 +63,13 @@ public class UsuarioController {
         usuarioService.deletaUsuarioPorEmail(email);
         return ResponseEntity.ok().build();
     }
+
+
+    @PutMapping
+    @Operation(summary = "Atualizar usuario")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<UsuarioDTO> atualizaDadoUsuario(@RequestBody UsuarioDTO dto) {
+        return ResponseEntity.ok(usuarioService.atualizaDadosUsuario(dto));
+    }
+
 }

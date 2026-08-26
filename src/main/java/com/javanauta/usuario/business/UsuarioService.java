@@ -7,6 +7,7 @@ import com.javanauta.usuario.infrastructure.exceptions.ConflictException;
 import com.javanauta.usuario.infrastructure.exceptions.ResourceNotFoundException;
 import com.javanauta.usuario.infrastructure.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,4 +57,27 @@ public class UsuarioService {
                 .orElseThrow(() -> new ResourceNotFoundException("Email nao encontrado" + email));
         usuarioRepository.delete(usuario);
     }
+
+    @Transactional
+    public UsuarioDTO atualizaDadosUsuario(UsuarioDTO usuarioDTO) {
+        String emailLogado = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Usuario usuarioEntity = usuarioRepository.findByEmail(emailLogado)
+                .orElseThrow(() -> new ResourceNotFoundException("Email nao localizado"));
+
+        if (usuarioDTO.getEmail() != null && !usuarioDTO.getEmail().equals(emailLogado)
+                && verificaEmailExistente(usuarioDTO.getEmail())) {
+            throw new ConflictException("Email ja cadastrado: " + usuarioDTO.getEmail());
+        }
+
+        if (usuarioDTO.getSenha() != null && !usuarioDTO.getSenha().isBlank()) {
+            usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
+        } else {
+            usuarioDTO.setSenha(null);
+        }
+
+        usuarioConverter.updateUsuario(usuarioDTO, usuarioEntity);
+        return usuarioConverter.paraUsuarioDTO(usuarioEntity);
+    }
+
 }

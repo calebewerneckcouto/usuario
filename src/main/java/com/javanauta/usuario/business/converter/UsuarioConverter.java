@@ -8,6 +8,7 @@ import com.javanauta.usuario.infrastructure.entity.Telefone;
 import com.javanauta.usuario.infrastructure.entity.Usuario;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +29,6 @@ public class UsuarioConverter {
         return UsuarioDTO.builder()
                 .nome(usuario.getNome())
                 .email(usuario.getEmail())
-                .senha(usuario.getSenha())
                 .enderecos(paraListaEnderecoDTO(usuario.getEnderecos()))
                 .telefones(paraListaTelefoneDTO(usuario.getTelefones()))
                 .build();
@@ -96,5 +96,38 @@ public class UsuarioConverter {
                 .numero(telefone.getNumero())
                 .ddd(telefone.getDdd())
                 .build();
+    }
+
+
+    public void updateUsuario(UsuarioDTO usuarioDTO, Usuario entity) {
+        if (usuarioDTO.getNome() != null) {
+            entity.setNome(usuarioDTO.getNome());
+        }
+
+        if (usuarioDTO.getEmail() != null) {
+            entity.setEmail(usuarioDTO.getEmail());
+        }
+
+        if (usuarioDTO.getSenha() != null) {
+            entity.setSenha(usuarioDTO.getSenha());
+        }
+
+        if (usuarioDTO.getEnderecos() != null) {
+            if (entity.getEnderecos() == null) {
+                entity.setEnderecos(new ArrayList<>());
+            } else {
+                entity.getEnderecos().clear();
+            }
+            entity.getEnderecos().addAll(paraListaEndereco(usuarioDTO.getEnderecos()));
+        }
+
+        if (usuarioDTO.getTelefones() != null) {
+            if (entity.getTelefones() == null) {
+                entity.setTelefones(new ArrayList<>());
+            } else {
+                entity.getTelefones().clear();
+            }
+            entity.getTelefones().addAll(paraListaTelefone(usuarioDTO.getTelefones()));
+        }
     }
 }
