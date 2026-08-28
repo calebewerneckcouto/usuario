@@ -81,6 +81,20 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.atualizaDadosUsuario(dto));
     }
 
+    @PostMapping("/endereco")
+    @Operation(summary = "Cadastrar endereco")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<EnderecoDTO> cadastraEndereco(@RequestBody EnderecoDTO dto) {
+        return ResponseEntity.ok(usuarioService.cadastraEndereco(dto));
+    }
+
+    @PostMapping("/telefone")
+    @Operation(summary = "Cadastrar telefone")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<TelefoneDTO> cadastraTelefone(@RequestBody TelefoneDTO dto) {
+        return ResponseEntity.ok(usuarioService.cadastraTelefone(dto));
+    }
+
     @PutMapping("/endereco")
     @Operation(summary = "Atualizar endereco")
     @SecurityRequirement(name = "Bearer Authentication")
@@ -98,4 +112,5 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.atualizaTelefone(id,dto));
     }
 
+    
 }
