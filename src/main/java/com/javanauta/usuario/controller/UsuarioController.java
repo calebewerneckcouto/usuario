@@ -5,6 +5,7 @@ import com.javanauta.usuario.business.dto.EnderecoDTO;
 import com.javanauta.usuario.business.dto.TelefoneDTO;
 import com.javanauta.usuario.business.dto.UsuarioDTO;
 import com.javanauta.usuario.infrastructure.security.JwtUtil;
+import com.javanauta.usuario.infrastructure.exceptions.UnauthorizedException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,15 +42,19 @@ public class UsuarioController {
             description = "Retorna o token JWT. Copie o campo 'token' e cole no botao Authorize do Swagger."
     )
     public ResponseEntity<Map<String, String>> login(@RequestBody UsuarioDTO usuarioDTO) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(usuarioDTO.getEmail(), usuarioDTO.getSenha())
-        );
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(usuarioDTO.getEmail(), usuarioDTO.getSenha())
+            );
 
-        String token = jwtUtil.generateToken(authentication.getName());
-        return ResponseEntity.ok(Map.of(
-                "token", token,
-                "authorization", "Bearer " + token
-        ));
+            String token = jwtUtil.generateToken(authentication.getName());
+            return ResponseEntity.ok(Map.of(
+                    "token", token,
+                    "authorization", "Bearer " + token
+            ));
+        } catch (AuthenticationException ex) {
+            throw new UnauthorizedException("Email ou senha invalidos", ex);
+        }
     }
 
     @GetMapping
