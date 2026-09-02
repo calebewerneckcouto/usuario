@@ -10,6 +10,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -28,6 +29,16 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
 
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers(
+                "/swagger-ui.html",
+                "/swagger-ui/**",
+                "/v3/api-docs/**",
+                "/usuario/login"
+        ).requestMatchers(HttpMethod.POST, "/usuario");
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, DaoAuthenticationProvider authenticationProvider) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -38,12 +49,14 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/usuario/login"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuario/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuario").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuario/todos").authenticated()
                         .requestMatchers(HttpMethod.GET, "/usuario").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/usuario/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/usuario/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/usuario/**").authenticated()
                         .anyRequest().authenticated()
                 )
