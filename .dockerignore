@@ -1,7 +1,7 @@
 .git
+.idea
 .gradle
-src
-gradle
+build
 *.md
-!build/libs/*.jar
-build/libs/*-plain.jar
+.github
+gradle/wrapper/gradle-wrapper.jar.bak
