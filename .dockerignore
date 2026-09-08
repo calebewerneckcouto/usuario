@@ -1,0 +1,7 @@
+.git
+.gradle
+src
+gradle
+*.md
+!build/libs/*.jar
+build/libs/*-plain.jar
