@@ -33,4 +33,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("mensagem", ex.getMessage()));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String>handleIllegalArgumentException(IllegalArgumentException ex){
+       return new  ResponseEntity<>(ex.getMessage(),HttpStatus.BAD_REQUEST);
+    }
 }
