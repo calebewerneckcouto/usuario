@@ -56,7 +56,7 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public UsuarioDTO buscarUsuarioPorEmail(String email) {
-        Usuario usuario = usuarioRepository.findByEmail(email)
+        Usuario usuario = usuarioRepository.findFirstByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Email nao encontrado: " + email));
         return usuarioConverter.paraUsuarioDTO(usuario);
     }
@@ -71,16 +71,17 @@ public class UsuarioService {
 
     @Transactional
     public void deletaUsuarioPorEmail(String email) {
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Email nao encontrado" + email));
-        usuarioRepository.delete(usuario);
+        if (!usuarioRepository.existsByEmail(email)) {
+            throw new ResourceNotFoundException("Email nao encontrado" + email);
+        }
+        usuarioRepository.deleteByEmail(email);
     }
 
     @Transactional
     public UsuarioDTO atualizaDadosUsuario(UsuarioDTO usuarioDTO) {
         String emailLogado = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Usuario usuarioEntity = usuarioRepository.findByEmail(emailLogado)
+        Usuario usuarioEntity = usuarioRepository.findFirstByEmail(emailLogado)
                 .orElseThrow(() -> new ResourceNotFoundException("Email nao localizado"));
 
         if (usuarioDTO.getEmail() != null && !usuarioDTO.getEmail().equals(emailLogado)
@@ -119,7 +120,7 @@ public class UsuarioService {
     @Transactional
     public EnderecoDTO cadastraEndereco(EnderecoDTO enderecoDTO) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() ->
+        Usuario usuario = usuarioRepository.findFirstByEmail(email).orElseThrow(() ->
                 new ResourceNotFoundException("Email nao localizado: " + email));
 
         Endereco endereco = usuarioConverter.paraEnderecoEntity(enderecoDTO, usuario.getId());
@@ -129,7 +130,7 @@ public class UsuarioService {
     @Transactional
     public TelefoneDTO cadastraTelefone(TelefoneDTO telefoneDTO) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() ->
+        Usuario usuario = usuarioRepository.findFirstByEmail(email).orElseThrow(() ->
                 new ResourceNotFoundException("Email nao localizado: " + email));
 
         Telefone telefone = usuarioConverter.paraTelefoneEntity(telefoneDTO, usuario.getId());
