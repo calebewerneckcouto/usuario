@@ -42,7 +42,7 @@ public class UsuarioController {
     @PostMapping("/login")
     @Operation(
             summary = "Login",
-            description = "Retorna o token JWT. Copie o campo 'token' e cole no botao Authorize do Swagger."
+            description = "Retorna o JWT no campo authorization, no formato Bearer."
     )
     public ResponseEntity<Map<String, String>> login(@RequestBody UsuarioDTO usuarioDTO) {
         try {
@@ -51,10 +51,7 @@ public class UsuarioController {
             );
 
             String token = jwtUtil.generateToken(authentication.getName());
-            return ResponseEntity.ok(Map.of(
-
-                    "authorization", "Bearer " + token
-            ));
+            return ResponseEntity.ok(Map.of("authorization", "Bearer " + token));
         } catch (AuthenticationException ex) {
             throw new UnauthorizedException("Email ou senha invalidos", ex);
         }
