@@ -52,7 +52,7 @@ public class UsuarioController {
 
             String token = jwtUtil.generateToken(authentication.getName());
             return ResponseEntity.ok(Map.of(
-                    "token", token,
+
                     "authorization", "Bearer " + token
             ));
         } catch (AuthenticationException ex) {
