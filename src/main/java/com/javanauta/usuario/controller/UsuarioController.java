@@ -126,5 +126,16 @@ public class UsuarioController {
       return ResponseEntity.ok(viaCepService.buscarDadosEndereco(cep));
     }
 
+
+
+
+    @DeleteMapping("/telefone")
+    @Operation(summary = "Deletar telefone")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Void> deletaTelefone(@RequestParam("id")Long id){
+        usuarioService.deletaTelefone(id);
+        return ResponseEntity.ok().build();
+    }
+
     
 }

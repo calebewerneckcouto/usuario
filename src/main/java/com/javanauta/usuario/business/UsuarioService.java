@@ -136,4 +136,14 @@ public class UsuarioService {
         Telefone telefone = usuarioConverter.paraTelefoneEntity(telefoneDTO, usuario.getId());
         return usuarioConverter.paraTelefoneDTO(telefoneRepository.save(telefone));
     }
+
+    @Transactional
+    public void deletaTelefone(Long id){
+        Telefone telefone = telefoneRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException("Id nao encontrado" + id));
+        telefoneRepository.delete(telefone);
+    }
+
+
+
 }
