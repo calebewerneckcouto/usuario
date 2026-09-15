@@ -144,6 +144,11 @@ public class UsuarioService {
         telefoneRepository.delete(telefone);
     }
 
-
+    @Transactional
+    public void deletaEndereco(Long id){
+        Endereco endereco = enderecoRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException("Id nao encontrado" + id));
+        enderecoRepository.delete(endereco);
+    }
 
 }

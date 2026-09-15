@@ -137,5 +137,12 @@ public class UsuarioController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/endereco")
+    @Operation(summary = "Deletar endereco")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Void> deletaEndereco(@RequestParam("id")Long id){
+        usuarioService.deletaEndereco(id);
+        return ResponseEntity.ok().build();
+    }
     
 }
