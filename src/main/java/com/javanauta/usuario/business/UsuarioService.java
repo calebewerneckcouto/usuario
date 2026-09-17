@@ -1,6 +1,7 @@
 package com.javanauta.usuario.business;
 
 import com.javanauta.usuario.business.converter.UsuarioConverter;
+import com.javanauta.usuario.business.dto.AlterarSenhaDTO;
 import com.javanauta.usuario.business.dto.EnderecoDTO;
 import com.javanauta.usuario.business.dto.TelefoneDTO;
 import com.javanauta.usuario.business.dto.UsuarioDTO;
@@ -149,6 +150,20 @@ public class UsuarioService {
         Endereco endereco = enderecoRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException("Id nao encontrado" + id));
         enderecoRepository.delete(endereco);
+    }
+
+
+
+    @Transactional
+    public void alteraSenha(AlterarSenhaDTO dto){
+        if(dto.getSenha()== null || dto.getSenha().isBlank()){
+            throw new IllegalArgumentException("Senha invalida");
+        }
+
+        String emailLogado = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuario = usuarioRepository.findFirstByEmail(emailLogado).orElseThrow(()-> new ResourceNotFoundException("Email não localizado"));
+        usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
+        usuarioRepository.save(usuario);
     }
 
 }

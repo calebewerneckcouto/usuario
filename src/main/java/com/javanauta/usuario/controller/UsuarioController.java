@@ -2,6 +2,7 @@ package com.javanauta.usuario.controller;
 
 import com.javanauta.usuario.business.UsuarioService;
 import com.javanauta.usuario.business.ViaCepService;
+import com.javanauta.usuario.business.dto.AlterarSenhaDTO;
 import com.javanauta.usuario.business.dto.EnderecoDTO;
 import com.javanauta.usuario.business.dto.TelefoneDTO;
 import com.javanauta.usuario.business.dto.UsuarioDTO;
@@ -142,6 +143,15 @@ public class UsuarioController {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Void> deletaEndereco(@RequestParam("id")Long id){
         usuarioService.deletaEndereco(id);
+        return ResponseEntity.ok().build();
+    }
+
+
+    @PutMapping("/senha")
+    @Operation(summary = "Alterar senha do usuario Logado")
+    @SecurityRequirement(name="Bearer Authentication")
+    public ResponseEntity<Void> alteraSenha(@RequestBody AlterarSenhaDTO dto){
+        usuarioService.alteraSenha(dto);
         return ResponseEntity.ok().build();
     }
     
