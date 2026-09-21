@@ -32,6 +32,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if ("/usuario".equals(path) && HttpMethod.POST.matches(request.getMethod())) {
             return true;
         }
+        if("/usuario/recuperar-senha".equals(path) && HttpMethod.POST.matches(request.getMethod())){
+            return true;
+        }
         return path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs");
     }
 

@@ -1,10 +1,7 @@
 package com.javanauta.usuario.business;
 
 import com.javanauta.usuario.business.converter.UsuarioConverter;
-import com.javanauta.usuario.business.dto.AlterarSenhaDTO;
-import com.javanauta.usuario.business.dto.EnderecoDTO;
-import com.javanauta.usuario.business.dto.TelefoneDTO;
-import com.javanauta.usuario.business.dto.UsuarioDTO;
+import com.javanauta.usuario.business.dto.*;
 import com.javanauta.usuario.infrastructure.entity.Endereco;
 import com.javanauta.usuario.infrastructure.entity.Telefone;
 import com.javanauta.usuario.infrastructure.entity.Usuario;
@@ -19,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.util.List;
 
 @Service
@@ -139,31 +137,56 @@ public class UsuarioService {
     }
 
     @Transactional
-    public void deletaTelefone(Long id){
-        Telefone telefone = telefoneRepository.findById(id).orElseThrow(()->
+    public void deletaTelefone(Long id) {
+        Telefone telefone = telefoneRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Id nao encontrado" + id));
         telefoneRepository.delete(telefone);
     }
 
     @Transactional
-    public void deletaEndereco(Long id){
-        Endereco endereco = enderecoRepository.findById(id).orElseThrow(()->
+    public void deletaEndereco(Long id) {
+        Endereco endereco = enderecoRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Id nao encontrado" + id));
         enderecoRepository.delete(endereco);
     }
 
 
-
     @Transactional
-    public void alteraSenha(AlterarSenhaDTO dto){
-        if(dto.getSenha()== null || dto.getSenha().isBlank()){
+    public void alteraSenha(AlterarSenhaDTO dto) {
+        if (dto.getSenha() == null || dto.getSenha().isBlank()) {
             throw new IllegalArgumentException("Senha invalida");
         }
 
         String emailLogado = SecurityContextHolder.getContext().getAuthentication().getName();
-        Usuario usuario = usuarioRepository.findFirstByEmail(emailLogado).orElseThrow(()-> new ResourceNotFoundException("Email não localizado"));
+        Usuario usuario = usuarioRepository.findFirstByEmail(emailLogado).orElseThrow(() -> new ResourceNotFoundException("Email não localizado"));
         usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
         usuarioRepository.save(usuario);
     }
+
+    @Transactional
+    public RecuperarSenhaDTO recuperarSenha(String email) {
+        Usuario usuario = usuarioRepository.findFirstByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Email não encontrado"));
+
+        String senhaAleatoria = gerarSenhaAleatoria();
+        usuario.setSenha(passwordEncoder.encode(senhaAleatoria));
+        usuarioRepository.save(usuario);
+
+        return RecuperarSenhaDTO.builder()
+                .email(usuario.getEmail())
+                .senha(usuario.getSenha())
+                .build();
+
+    }
+
+    private String gerarSenhaAleatoria() {
+        SecureRandom random = new SecureRandom();
+        StringBuilder senha = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            senha.append(random.nextInt(10));
+        }
+
+        return senha.toString();
+    }
+
 
 }

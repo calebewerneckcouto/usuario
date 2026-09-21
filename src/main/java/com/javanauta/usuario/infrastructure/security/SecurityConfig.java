@@ -31,11 +31,12 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().requestMatchers(
-                "/swagger-ui.html",
-                "/swagger-ui/**",
-                "/v3/api-docs/**",
-                "/usuario/login"
-        ).requestMatchers(HttpMethod.POST, "/usuario");
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/usuario/login"
+                ).requestMatchers(HttpMethod.POST, "/usuario")
+                .requestMatchers(HttpMethod.POST, "/usuario/recuperar-senha");
     }
 
     @Bean
@@ -53,7 +54,8 @@ public class SecurityConfig {
                                 "/usuario/login"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuario").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/usuario/endereco/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/usuario/recuperar-senha").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/usuario/endereco/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuario/todos").authenticated()
                         .requestMatchers(HttpMethod.GET, "/usuario").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/usuario/**").authenticated()
