@@ -153,9 +153,9 @@ public class UsuarioController {
     }
 
 
-    @PostMapping("/senha")
-    @Operation(summary = "Recuperar Senha",description = "Gera senha aleatoria e envia por email")
-    public ResponseEntity<RecuperarSenhaDTO> recuperarSenha(@RequestBody RecuperarSenhaDTO dto){
+    @PostMapping("/recuperar-senha")
+    @Operation(summary = "Recuperar Senha", description = "Gera senha aleatoria e envia por email")
+    public ResponseEntity<RecuperarSenhaDTO> recuperarSenha(@RequestBody RecuperarSenhaDTO dto) {
         return ResponseEntity.ok(usuarioService.recuperarSenha(dto.getEmail()));
     }
     

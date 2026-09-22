@@ -173,7 +173,7 @@ public class UsuarioService {
 
         return RecuperarSenhaDTO.builder()
                 .email(usuario.getEmail())
-                .senha(usuario.getSenha())
+                .senha(senhaAleatoria)
                 .build();
 
     }
